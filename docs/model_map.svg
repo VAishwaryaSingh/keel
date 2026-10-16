@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 560" role="img" aria-labelledby="t d" font-family="Arial, Helvetica, sans-serif" font-size="13">
+<title id="t">Keel model map</title>
+<desc id="d">Inputs flow into calculation tabs, then statements and metrics, then outputs, the Outputs_Web contract and the website. Calculations flow one way.</desc>
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#1f3a5f"/></marker>
+<style>.b{fill:#fff;stroke:#1f3a5f;stroke-width:1.5;rx:6}.i{fill:#fff9e0;stroke:#b8860b;stroke-width:1.5;rx:6}.o{fill:#e7f3ec;stroke:#2e7d4f;stroke-width:1.5;rx:6}.m{fill:#eaf0fa;stroke:#1f3a5f;stroke-width:1.5;rx:6}.h{font-weight:700;fill:#1f3a5f}.s{font-size:11px;fill:#444}.l{stroke:#1f3a5f;stroke-width:1.5;fill:none;marker-end:url(#a)}</style></defs>
+<text x="20" y="26" class="h" font-size="18">Keel: one-way flow, inputs to outputs</text>
+<text x="20" y="46" class="s">Blue = input, black = formula, green = link. The website reads only Outputs_Web and writes only the named inputs.</text>
+<rect class="i" x="20" y="70" width="190" height="170"/><text x="32" y="92" class="h">Inputs (named inp_*)</text>
+<text x="32" y="114">Inputs_Drivers</text><text x="32" y="134">Inputs_Scenarios</text><text x="32" y="154">Inputs_Budget</text><text x="32" y="174">Inputs_Comps</text>
+<text x="32" y="200" class="s">Scenario selector picks the</text><text x="32" y="214" class="s">live column; Custom is where</text><text x="32" y="228" class="s">the website writes.</text>
+<rect class="b" x="260" y="70" width="190" height="236"/><text x="272" y="92" class="h">Build the business</text>
+<text x="272" y="114">Rev_Build (ARR)</text><text x="272" y="134">Rev_Rec (billings, IFRS 15)</text><text x="272" y="154">Headcount_Opex</text><text x="272" y="174">Contract_Costs (IFRS 15)</text><text x="272" y="194">COGS</text>
+<text x="272" y="222" class="s">New + expansion - churn;</text><text x="272" y="236" class="s">annual upfront invoices</text><text x="272" y="250" class="s">recognised over 12 months;</text><text x="272" y="264" class="s">deferred revenue roll-forward</text>
+<rect class="b" x="500" y="70" width="170" height="130"/><text x="512" y="92" class="h">Statements</text><text x="512" y="114">IS</text><text x="512" y="134">BS (balance check)</text><text x="512" y="154">CF (indirect)</text><text x="512" y="180" class="s">Balances every period</text>
+<rect class="m" x="500" y="220" width="170" height="86"/><text x="512" y="242" class="h">SaaS_Metrics</text><text x="512" y="262">NRR, GRR, CAC payback,</text><text x="512" y="278">LTV/CAC, burn multiple,</text><text x="512" y="294">Rule of 40, runway</text>
+<rect class="b" x="260" y="340" width="190" height="150"/><text x="272" y="362" class="h">Acquisition (Vaultline)</text><text x="272" y="384">MA_Target</text><text x="272" y="402">MA_PPA (IFRS 3)</text><text x="272" y="420">MA_ProForma</text><text x="272" y="438">MA_Valuation</text><text x="272" y="456">MA_Returns</text>
+<rect class="m" x="20" y="340" width="190" height="150"/><text x="32" y="362" class="h">FP&amp;A depth</text><text x="32" y="384">LT_Model (years 1-5)</text><text x="32" y="402">Budget_vs_Forecast</text><text x="32" y="420">Lever_Analysis*</text><text x="32" y="438">Sensitivity*</text><text x="32" y="456">Business_Review</text><text x="32" y="478" class="s">* engine-run, staleness-checked</text>
+<rect class="m" x="500" y="340" width="170" height="86"/><text x="512" y="362" class="h">Checks</text><text x="512" y="382">39 integrity tests</text><text x="512" y="398">1 master flag</text><text x="512" y="414">8 outlier warnings</text>
+<rect class="o" x="730" y="150" width="170" height="130"/><text x="742" y="172" class="h">Outputs_Web</text><text x="742" y="192">249 named out_* ranges</text><text x="742" y="208">links only</text><text x="742" y="224">input registry (99)</text><text x="742" y="244" class="s">The web contract</text>
+<rect class="o" x="730" y="330" width="170" height="130"/><text x="742" y="352" class="h">Website (web/)</text><text x="742" y="372">HyperFormula runs the</text><text x="742" y="388">workbook's own formulas</text><text x="742" y="408">Planner, sensitivity,</text><text x="742" y="424">download (.xlsx)</text>
+<path class="l" d="M210 150H258"/><path class="l" d="M450 150H498"/><path class="l" d="M585 200V218"/><path class="l" d="M450 270L498 270" opacity=".0"/>
+<path class="l" d="M585 306V338"/><path class="l" d="M670 150C700 150 700 190 728 190"/><path class="l" d="M670 262C700 262 700 240 728 240"/><path class="l" d="M815 280V328"/>
+<path class="l" d="M210 400H258"/><path class="l" d="M450 400H498"/><path class="l" d="M355 306V338"/>
+<text x="20" y="530" class="s">Every row uses one formula across all 24 months; no circularity (interest on the prior-period balance); portable functions only.</text>
+</svg>

@@ -1,0 +1,116 @@
+{
+ "selector": "C4",
+ "metrics": {
+  "rev_fy1": "IS!AN12",
+  "rev_fy2": "IS!AO12",
+  "ebitda_fy1": "IS!AN29",
+  "ebitda_fy2": "IS!AO29",
+  "arr12": "SaaS_Metrics!Z13",
+  "arr24": "SaaS_Metrics!AL13",
+  "growth12": "SaaS_Metrics!Z16",
+  "nrr12": "SaaS_Metrics!Z19",
+  "grr12": "SaaS_Metrics!Z20",
+  "payback12": "SaaS_Metrics!Z28",
+  "ltvcac12": "SaaS_Metrics!Z31",
+  "cash24": "BS!AL9",
+  "mincash": "Sensitivity!B4",
+  "fte24": "Headcount_Opex!AL33",
+  "rule40_24": "SaaS_Metrics!AL39",
+  "ma_value": "MA_Returns!C25",
+  "pf_arr24": "MA_ProForma!AL94",
+  "pf_cash24": "MA_ProForma!AL74",
+  "pf_mincash": "MA_Returns!C49"
+ },
+ "scen_cells": {
+  "inp_logos_ent": "F6",
+  "inp_logos_mid": "F7",
+  "inp_logo_growth": "F8",
+  "inp_acv_ent": "F10",
+  "inp_acv_mid": "F11",
+  "inp_price_uplift": "F12",
+  "inp_exp_ent": "F14",
+  "inp_exp_mid": "F15",
+  "inp_churn_ent": "F16",
+  "inp_churn_mid": "F17",
+  "inp_hires_rd": "F19",
+  "inp_hires_sm": "F20",
+  "inp_hires_ga": "F21",
+  "inp_hires_cs": "F22",
+  "inp_dso": "F24",
+  "inp_v_logos": "F26",
+  "inp_v_exp": "F27",
+  "inp_v_churn": "F28",
+  "inp_ma_syn_achieved": "F29"
+ },
+ "levers": [
+  {
+   "driver": "inp_churn_ent",
+   "step": 0.01
+  },
+  {
+   "driver": "inp_churn_mid",
+   "step": 0.01
+  },
+  {
+   "driver": "inp_exp_ent",
+   "step": 0.01
+  },
+  {
+   "driver": "inp_exp_mid",
+   "step": 0.01
+  },
+  {
+   "driver": "inp_logos_ent",
+   "step": 0.5
+  },
+  {
+   "driver": "inp_logos_mid",
+   "step": 2
+  },
+  {
+   "driver": "inp_acv_ent",
+   "step": 10
+  },
+  {
+   "driver": "inp_acv_mid",
+   "step": 2
+  },
+  {
+   "driver": "inp_price_uplift",
+   "step": 0.01
+  },
+  {
+   "driver": "inp_hires_sm",
+   "step": 0.5
+  },
+  {
+   "driver": "inp_hires_rd",
+   "step": 0.5
+  },
+  {
+   "driver": "inp_dso",
+   "step": 5
+  }
+ ],
+ "lever_metrics": [
+  "arr24",
+  "nrr12",
+  "payback12",
+  "cash24",
+  "ebitda_fy2"
+ ],
+ "churn_shifts": [
+  -0.04,
+  -0.02,
+  0.0,
+  0.02,
+  0.04
+ ],
+ "scales": [
+  0.8,
+  0.9,
+  1.0,
+  1.1,
+  1.2
+ ]
+}

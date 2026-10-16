@@ -1,0 +1,39 @@
+name: Deploy the Keel website to GitHub Pages
+on:
+  push:
+    branches: [main]
+    paths: ['web/**', 'model/**']
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  test-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Run the website tests (engine, download, browser builds, UI)
+        working-directory: web
+        run: |
+          npm ci
+          npm test
+      - uses: actions/configure-pages@v5
+      - name: Upload the static site (web/ only; node_modules and tests are not published)
+        run: |
+          mkdir -p _site
+          cp -r web/index.html web/styles.css web/*.js web/model web/.nojekyll _site/
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4

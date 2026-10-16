@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Keel SaaS Model</title>
+<meta name="description" content="Interactive FP&A model of a synthetic B2B SaaS company. Every number is calculated by the workbook's own formulas, running in your browser.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="loading" role="status">Loading the model… (parsing the workbook and calculating about 16,000 formulas)</div>
+<div id="app"></div>
+<footer id="footer"><p>All figures are synthetic. Calculations run on the workbook's own formulas. No sign-in, no tracking, no personal data. Licence: GPL-3.0 (HyperFormula is GPL-3.0). <a href="https://github.com/">Source and workbook</a></p></footer>
+<noscript><p>This site needs JavaScript: the model runs in your browser.</p></noscript>
+<script src="https://cdn.jsdelivr.net/npm/hyperformula@2.7.1/dist/hyperformula.full.min.js" integrity="sha384-mL8xIzdJNHBlFY+1tgjim6oUyvoCQpvhxipvuvmbN6xCaJzrausWuA16r/ktXKcm" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" integrity="sha384-vtjasyidUo0kW94K5MXDXntzOJpQgBKXmE7e2Ga4LG0skTTLeBi97eFAXsqewJjw" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js" integrity="sha384-Pqp51FUN2/qzfxZxBCtF0stpc9ONI6MYZpVqmo8m20SoaQCzf+arZvACkLkirlPz" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js" integrity="sha384-dug+JxfBvklEQdJ4AYuBBAIScUz0bVN73xpy273gcAwHjb3qI0fXmuYNaNfdyYJG" crossorigin="anonymous"></script>
+<script type="module" src="app.js"></script>
+</body>
+</html>

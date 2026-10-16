@@ -1,0 +1,20 @@
+{
+  "name": "keel-web",
+  "version": "0.6.0",
+  "private": true,
+  "description": "Keel: interactive website that runs the workbook's own formulas in the browser",
+  "license": "GPL-3.0-only",
+  "type": "module",
+  "scripts": {
+    "test": "node tests/engine.test.mjs && node tests/download.test.mjs && node tests/umd.test.mjs && node tests/tools.test.mjs && node tests/ui.test.mjs && node tests/ui_tools.test.mjs && node tests/ui_storage.test.mjs"
+  },
+  "dependencies": {
+    "chart.js": "4.4.1",
+    "exceljs": "4.4.0",
+    "hyperformula": "2.7.1",
+    "xlsx": "0.18.5"
+  },
+  "devDependencies": {
+    "jsdom": "24.1.0"
+  }
+}
