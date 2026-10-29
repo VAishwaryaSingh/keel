@@ -12,7 +12,7 @@ import { mountSensitivity } from './sensitivity.js';
 // configuration
 // ------------------------------------------------------------------------------------------------
 const SECTIONS = [
-  ['overview', '1. Overview'], ['assumptions', '2. Assumptions'], ['revenue', '3. Revenue build'], ['revrec', '4. Revenue recognition'],
+  ['overview', '1. Overview'], ['assumptions', '2. Inputs'], ['revenue', '3. Revenue build'], ['revrec', '4. Revenue recognition'],
   ['costs', '5. Costs & headcount'], ['statements', '6. Three statements'], ['health', '7. SaaS health'], ['budget', '8. Budget vs forecast'],
   ['planner', '9. Scenario planner'], ['sensitivity', '10. Sensitivity tool'], ['acquisition', '11. Acquisition'], ['checks', '12. Checks & AI note'], ['download', '13. Download'],
 ];
@@ -47,7 +47,7 @@ const AI_NOTE = [
 // ------------------------------------------------------------------------------------------------
 // app state
 // ------------------------------------------------------------------------------------------------
-const S = { listeners: [], ctx: null, model: null, bytes: null, ExcelJS: null, charts: null, fy: 'fy1', stmt: 'is', period: 'fy1', healthMonth: 12, open: {}, fields: {}, debounce: {}, lastRender: null };
+const S = { listeners: [], ctx: null, model: null, bytes: null, ExcelJS: null, charts: null, fy: 'fy1', stmt: 'is', period: 'fy1', healthMonth: 12, open: {}, fields: {}, cells: {}, debounce: {}, lastRender: null };
 const q = name => S.model.get(name);
 const ser = name => S.model.series(name);
 const monthLabels = () => ser('out_period_end').months.map(excelDate);
@@ -78,6 +78,8 @@ function togglePanel(force) {
   const open = force === undefined ? !p.classList.contains('open') : force;
   p.classList.toggle('open', open);
   $('#panel-toggle').setAttribute('aria-expanded', String(open));
+  // On wide screens the panel is always shown, so "open" means bring it into view.
+  if (open) p.scrollIntoView?.({ block: 'nearest', behavior: 'smooth' });
 }
 
 function buildPanel() {
@@ -113,12 +115,12 @@ function buildField(r) {
   const err = h('div', { class: 'err', id: id + '-err', role: 'alert' });
   let control;
   if (toggle) {
-    control = h('input', { type: 'checkbox', id, onchange: e => apply(r, e.target.checked ? 1 : 0, e.target) });
+    control = h('input', { type: 'checkbox', id, onchange: e => apply(r, e.target.checked ? 1 : 0, e.target, err) });
   } else {
     const slider = h('input', { type: 'range', id: id + '-range', min: r.min ?? 0, max: r.max ?? 1, step, 'aria-label': r.label + ' slider', tabindex: '-1' });
     const box = h('input', { type: 'number', id, step: numStep, inputmode: 'decimal' });
-    slider.addEventListener('input', () => { box.value = inputDisplay(+slider.value, r.unit); schedule(r, +slider.value, box); });
-    box.addEventListener('input', () => schedule(r, inputParse(box.value, r.unit), box));
+    slider.addEventListener('input', () => { box.value = inputDisplay(+slider.value, r.unit); schedule(r, +slider.value, box, err); });
+    box.addEventListener('input', () => schedule(r, inputParse(box.value, r.unit), box, err));
     control = h('div', { class: 'ctl' }, slider, box, h('span', { class: 'unit' }, unitText));
     S.fields[r.name] = { r, box, slider, err };
   }
@@ -134,14 +136,13 @@ function buildField(r) {
   return field;
 }
 
-function schedule(r, value, box) {
-  const f = S.fields[r.name];
+function schedule(r, value, box, err) {
   const res = validate(r, value);
-  f.err.textContent = res || '';
+  err.textContent = res || '';
   box.setAttribute('aria-invalid', res ? 'true' : 'false');
   clearTimeout(S.debounce[r.name]);
   if (res) return;                       // invalid values never reach the engine
-  S.debounce[r.name] = setTimeout(() => apply(r, value, box), 300);
+  S.debounce[r.name] = setTimeout(() => apply(r, value, box, err), 300);
 }
 function validate(r, v) {
   if (!Number.isFinite(v)) return 'Enter a number.';
@@ -150,9 +151,9 @@ function validate(r, v) {
   if (r.max !== null && v > r.max + 1e-12) return `Maximum is ${shown(r.max)}.`;
   return '';
 }
-function apply(r, value, box) {
+function apply(r, value, box, err) {
   const res = S.model.setInput(r.name, value);
-  S.fields[r.name].err.textContent = res.ok ? '' : res.message;
+  err.textContent = res.ok ? '' : res.message;
   if (res.ok) render(box);
 }
 function updatePanel(skip) {
@@ -169,6 +170,47 @@ function updatePanel(skip) {
     f.field.classList.toggle('changed', changed);
     $('.base', f.field).textContent = `Base ${inputDisplay(base, f.r.unit)}${pct ? '%' : ''}${changed ? ' · changed' : ''}`;
   }
+  for (const [name, c] of Object.entries(S.cells)) {
+    const v = S.model.value(name);
+    if (c.r.unit === '1/0') c.box.checked = v === 1;
+    else if (c.box !== skip) c.box.value = inputDisplay(v, c.r.unit);
+    c.tr.classList.toggle('changed', Math.abs(v - S.model.baseValue(name)) > 1e-12);
+  }
+}
+
+// ------------------------------------------------------------------------------------------------
+// section 2: every input as an editable table (same validation and engine path as the panel)
+// ------------------------------------------------------------------------------------------------
+function buildInputTables() {
+  const groups = new Map();
+  for (const r of S.model.registry) {
+    if (!groups.has(r.section)) groups.set(r.section, []);
+    groups.get(r.section).push(r);
+  }
+  return [...groups].map(([sec, items]) => h('div', { class: 'in-group' }, h('h3', {}, sec),
+    h('table', { class: 'tbl in-tbl' },
+      h('thead', {}, h('tr', {}, ['Input', 'Value', 'Unit', 'Base', 'Allowed range', ''].map(x => h('th', { scope: 'col' }, x)))),
+      h('tbody', {}, items.map(buildInputRow)))));
+}
+function buildInputRow(r) {
+  const id = 'sec-in-' + r.name;
+  const pct = isPercentUnit(r.unit);
+  const toggle = r.unit === '1/0';
+  const err = h('div', { class: 'err', id: id + '-err', role: 'alert' });
+  const box = toggle
+    ? h('input', { type: 'checkbox', id, onchange: e => apply(r, e.target.checked ? 1 : 0, e.target, err) })
+    : h('input', { type: 'number', id, class: 'in-val', step: pct ? 0.1 : 'any', inputmode: 'decimal' });
+  if (!toggle) box.addEventListener('input', () => schedule(r, inputParse(box.value, r.unit), box, err));
+  const shown = x => inputDisplay(x, r.unit) + (pct ? '%' : '');
+  const tr = h('tr', { dataset: { name: r.name } },
+    h('th', { scope: 'row' }, h('label', { for: id }, r.label), r.tip ? h('div', { class: 'tip' }, r.tip) : null),
+    h('td', {}, box, err),
+    h('td', { class: 'unit' }, toggle ? 'tick = yes' : (pct ? '%' : r.unit)),
+    h('td', { class: 'num' }, toggle ? (S.model.baseValue(r.name) === 1 ? 'yes' : 'no') : shown(S.model.baseValue(r.name))),
+    h('td', { class: 'muted small' }, r.min === null || toggle ? '' : `${shown(r.min)} to ${shown(r.max)}`),
+    h('td', {}, h('button', { class: 'reset', type: 'button', 'aria-label': `Reset ${r.label} to Base`, onclick: () => { S.model.resetInput(r.name); render(); } }, 'reset')));
+  S.cells[r.name] = { r, box, err, tr };
+  return tr;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -213,8 +255,9 @@ function buildStatic() {
     workingsBlock('overview'));
   // 2 assumptions
   sec('assumptions').append(
-    h('p', {}, 'The control panel holds every input: use the Inputs button in the status bar (always visible), or the panel on the right on wide screens. Fields that differ from Base are highlighted.'),
-    h('div', { id: 'scen-table' }), workingsBlock('assumptions'));
+    h('p', {}, 'This is the source of every number in the model. Edit any value below and every section recalculates. Changing a scenario-driven input switches to the Custom scenario; changed rows are highlighted. The same inputs are also in the side panel, so you can edit while looking at another section.'),
+    h('div', { class: 'row-ctl' }, h('button', { class: 'btn', type: 'button', onclick: () => { S.model.resetAll(); render(); } }, 'Reset all to Base')),
+    ...buildInputTables(), h('div', { id: 'scen-table' }), workingsBlock('assumptions'));
   // 3 revenue
   sec('revenue').append(
     h('p', {}, 'ARR starts at the opening balance. New logos (volume x deal size), expansion and churn move it each month, separately for Enterprise and Mid-market. Churn and expansion are annual rates converted to monthly compounding and applied to opening ARR.'),

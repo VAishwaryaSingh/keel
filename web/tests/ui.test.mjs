@@ -45,7 +45,7 @@ ok($$('.chart .summary').every(p => p.textContent.length > 20), 'every chart has
 ok($$('canvas').every(c => c.getAttribute('aria-label')), 'every chart canvas has an accessible label');
 
 // panel
-const fields = $$('.field');
+const fields = $$('#panel .field');
 ok(fields.length === 99, `${fields.length} input fields in the panel (one per registry entry)`);
 ok(fields.every(f => { const l = f.querySelector('label'); const i = f.querySelector('input[type=number],input[type=checkbox]'); return l && i && l.getAttribute('for') === i.id; }), 'every field has a label bound to its control');
 ok($$('input[type=range]').length > 80, `${$$('input[type=range]').length} sliders`);
@@ -78,6 +78,21 @@ ok(Math.abs(S.model.value('inp_churn_ent') - 0.06) < 1e-12, 'per-field reset res
 box.value = '9'; fire(box, 'input'); await sleep(450);
 $('#reset-all').click();
 ok(S.model.scenario === 'Base' && $('#changed-count').textContent === '0 inputs changed', 'reset all returns to Base');
+
+// section 2: every input editable in a table, kept in sync with the panel
+ok($('#assumptions-h').textContent === '2. Inputs' && $$('#assumptions .in-tbl tbody tr').length === 99, `${$$('#assumptions .in-tbl tbody tr').length} editable rows in the Inputs section`);
+ok($$('#assumptions .in-tbl tbody tr').every(tr => { const l = tr.querySelector('label'); return l && $('#' + l.getAttribute('for')); }), 'every Inputs-section row has a label bound to its control');
+const cell = $('#sec-in-inp_churn_ent');
+ok(cell.value === '6', `Inputs-section churn shows 6: "${cell.value}"`);
+cell.value = '8'; fire(cell, 'input'); await sleep(450);
+ok(Math.abs(S.model.value('inp_churn_ent') - 0.08) < 1e-12 && S.model.scenario === 'Custom' && box.value === '8', 'editing in the Inputs section reaches the model and updates the panel');
+ok($('#assumptions tr[data-name="inp_churn_ent"]').classList.contains('changed'), 'changed row is highlighted in the Inputs section');
+cell.value = '90'; fire(cell, 'input'); await sleep(450);
+ok($('#sec-in-inp_churn_ent-err').textContent.includes('Maximum is 50%') && Math.abs(S.model.value('inp_churn_ent') - 0.08) < 1e-12, 'Inputs section blocks out-of-range values');
+box.value = '7'; fire(box, 'input'); await sleep(450);
+ok(cell.value === '7', 'editing in the panel updates the Inputs section');
+$('#reset-all').click();
+ok(cell.value === '6' && !$('#assumptions tr[data-name="inp_churn_ent"]').classList.contains('changed'), 'reset all clears the Inputs section');
 
 // toggle
 const tog = $('#in-inp_ma_include');
@@ -116,7 +131,7 @@ ok(!$('#revenue-w').hidden && $('#revenue-w').textContent.includes('inp_') && $$
 
 // download
 $('#dl-xlsx').click();
-await sleep(2500);
+for (let t = 0; t < 200 && $('#dl-status').textContent.startsWith('Preparing'); t++) await sleep(100);   // slow machines need more than 2.5 s
 ok($('#dl-status').textContent.startsWith('Downloaded'), `download: "${$('#dl-status').textContent}"`);
 ok(globalThis.__lastDownload && /^keel_model_base\.xlsx$/.test(globalThis.__lastDownload.name), 'download file name');
 
