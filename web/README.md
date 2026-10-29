@@ -55,7 +55,7 @@ The planner and sensitivity tools need dozens of full recalculations. They run o
 - **No real browser has run this.** Layout, colours, dark mode, the phone layout, keyboard flow and chart appearance are untested. The UI tests check behaviour, not looks. Please open it and look.
 - **First-load time is not measured in a browser.** In Node the workbook builds in about 1.8 s and first render completes in about 2.9 s, plus roughly 2.7 MB of libraries to download. The 3-second target on broadband is uncertain.
 - The recalculation reference is pycel, not Excel. Opening the workbook in Excel and Sheets is still open (`../tests/portability_checklist.md`).
-- - Not deployed: `.github/workflows/pages.yml` is ready, but it needs a GitHub repository with Pages enabled.
+- Deployed to GitHub Pages by `.github/workflows/pages.yml`: https://vaishwaryasingh.github.io/keel/
 
 ## Licence
 

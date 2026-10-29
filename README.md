@@ -2,7 +2,9 @@
 
 A formula-driven model of a synthetic UK B2B SaaS company (*Northgate Controls Ltd*, about £40m ARR, growing about 30%, not yet profitable). Full project brief: `../FPA.md`.
 
-**Status: all seven phases built (v0.7).** The workbook, the validation layer, the website and the scenario and sensitivity tools exist and pass 154 automated website checks plus the workbook validation. **Not done, and not doable by a tool:** nobody has looked at the site in a real browser, the file has not been opened in Excel or Google Sheets, the site is not deployed, and the manual rebuild (the model owner's task) has not been recorded. See *Your tasks* below.
+**Status: all seven phases built (v0.7).** The workbook, the validation layer, the website and the scenario and sensitivity tools exist and pass 154 automated website checks plus the workbook validation. **Not done, and not doable by a tool:** nobody has looked at the site in a real browser, the file has not been opened in Excel or Google Sheets, and the manual rebuild (the model owner's task) has not been recorded. See *Your tasks* below.
+
+**Live site:** https://vaishwaryasingh.github.io/keel/
 
 ![Model map](docs/model_map.svg)
 
@@ -76,7 +78,7 @@ Base FY1 against the synthetic budget: exit ARR £1.1m below (volume and churn, 
 
 ## The website (Phases 6 and 7)
 
-`web/` is a static site (HyperFormula + SheetJS + ExcelJS + Chart.js) that runs the workbook's own formulas in the browser. See `web/README.md` for how to run it, what was verified, and what was not. Headline: the browser engine reproduces all 5,469 `Outputs_Web` cells in Base, Upside and Downside; 154 automated checks pass in seven suites (`cd web && npm install && npm test`); **no real browser has rendered it yet**, so layout and first-load time are unverified. Licence: GPL-3.0 (HyperFormula is GPL-3.0). A GitHub Pages workflow (`.github/workflows/pages.yml`, which runs the tests before publishing) is ready, but the site is not deployed.
+`web/` is a static site (HyperFormula + SheetJS + ExcelJS + Chart.js) that runs the workbook's own formulas in the browser. See `web/README.md` for how to run it, what was verified, and what was not. Headline: the browser engine reproduces all 5,469 `Outputs_Web` cells in Base, Upside and Downside; 154 automated checks pass in seven suites (`cd web && npm install && npm test`); **no real browser has rendered it yet**, so layout and first-load time are unverified. Licence: GPL-3.0 (HyperFormula is GPL-3.0). A GitHub Pages workflow (`.github/workflows/pages.yml`, which runs the tests before publishing) publishes the site to https://vaishwaryasingh.github.io/keel/ on every push to `web/` or `model/`.
 
 Sections 9 and 10 are built: a scenario planner (presets, up to 4 saved scenarios, 2-4 way comparison, input diff, downside flags, acquisition overlay, scenario bridge) and a sensitivity tool (tornado, 7 x 7 two-way grid, goal seek, acquisition grid, CSV for every table). The acceptance tests in `tests/acceptance_checklist.md` pass against independent recalculations except the Excel step of test 2.
 
@@ -104,7 +106,7 @@ Sections 9 and 10 are built: a scenario planner (presets, up to 4 saved scenario
 - **Not opened in Excel or Google Sheets.** The portability pass is done by inspection and automated scans only; the checklist above is how you close it.
 - **Not checked by hand.** The Python model is not a substitute: it was written from the same understanding as the workbook. The brief requires you to rebuild the ARR bridge, deferred revenue roll-forward and goodwill independently (Phase 5). Phase 2 itself found one formula bug that a hand check would have caught: annual "opening" columns showed 0 for FY1 (fixed in v0.2).
 - No screenshots, no GIF walkthrough and no view-only Google Sheet link yet (they need a real browser and your Google account).
-- Deployment: push the repository and enable GitHub Pages (Source: GitHub Actions); then add the site link here.
+- Deployment: done, live at https://vaishwaryasingh.github.io/keel/.
 - The `Lever_Analysis` step sizes are labels for the snapshot run; changing them in the sheet does not rerun it.
 - Early-month runway figures use fewer than three months of burn history; read runway from month 3 onward.
 - All simplifications are in `docs/assumption_log.md` (41 items). M&A inputs, comps and synergies are illustrative assumptions.
